@@ -5,12 +5,11 @@ import dto.StudentDTO;
 import entity.Course;
 import entity.Student;
 import entity.StudentCourse;
+import exception.ExceptionHandler;
 import org.springframework.stereotype.Service;
-import repo.CourseRepository;
 import repo.StudentCourseRepository;
 import repo.StudentRepository;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,17 +19,13 @@ public class StudentService {
     private final CourseService courseService;
     private final StudentCourseRepository studentCourseRepository;
 
-    private final CourseRepository courseRepository;
-
     StudentService(final StudentRepository studentRepository,
                    final CourseService courseService,
-                   final StudentCourseRepository studentCourseRepository,
-                   final CourseRepository courseRepository) {
+                   final StudentCourseRepository studentCourseRepository) {
         this.studentRepository = studentRepository;
         this.courseService = courseService;
         this.studentCourseRepository = studentCourseRepository;
 
-        this.courseRepository = courseRepository;
     }
 
     public StudentDTO registerStudent(StudentDTO studentDTO) {
@@ -45,12 +40,12 @@ public class StudentService {
     }
 
     public List<CourseDTO> getAllCourses() {
-        return courseService.getAllCourses();
+        return courseService.getCourses();
     }
 
     public void allocateCourse(Long studentId, Long courseId) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+                .orElseThrow(() -> ExceptionHandler.handleEntityNotFoundException("Student", studentId));
         Course course = courseService.getCourseById(courseId);
         StudentCourse studentCourse = new StudentCourse();
         studentCourse.setStudent(student);
@@ -69,7 +64,7 @@ public class StudentService {
 
     public void updateStudentCourses(Long studentId, List<Long> courseIds) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+                .orElseThrow(() -> ExceptionHandler.handleEntityNotFoundException("Student", studentId));
         studentCourseRepository.deleteByStudent(student);
 
         for (Long courseId : courseIds) {
@@ -83,7 +78,7 @@ public class StudentService {
 
     public void deleteStudent(Long studentId) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+                .orElseThrow(() -> ExceptionHandler.handleEntityNotFoundException("Student", studentId));
         studentCourseRepository.deleteByStudent(student);
         studentRepository.deleteById(studentId);
     }

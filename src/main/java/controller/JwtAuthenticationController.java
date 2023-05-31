@@ -23,7 +23,6 @@ public class JwtAuthenticationController {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsService userDetailsService;
 
-    @Autowired
     public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;

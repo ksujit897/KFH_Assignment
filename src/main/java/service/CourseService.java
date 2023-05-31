@@ -2,10 +2,9 @@ package service;
 
 import dto.CourseDTO;
 import entity.Course;
+import exception.ExceptionHandler;
 import org.springframework.stereotype.Service;
 import repo.CourseRepository;
-
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,21 +30,14 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public List<CourseDTO> getAllCourses() {
-        List<Course> courses = courseRepository.findAll();
-        return courses.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
     public Course getCourseById(Long id) {
         return courseRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+                .orElseThrow(() -> ExceptionHandler.handleEntityNotFoundException("Course", id));
     }
 
     public CourseDTO updateCourse(Long id, CourseDTO courseDTO) {
         Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+                .orElseThrow(() -> ExceptionHandler.handleEntityNotFoundException("Course", id));
         course.setName(courseDTO.getName());
         Course updatedCourse = courseRepository.save(course);
         return convertToDTO(updatedCourse);
@@ -53,7 +45,7 @@ public class CourseService {
 
     public void deleteCourse(Long id) {
         Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+                .orElseThrow(() -> ExceptionHandler.handleEntityNotFoundException("Course", id));
         courseRepository.delete(course);
     }
 

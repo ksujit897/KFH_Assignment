@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 import repo.CourseRepository;
 import repo.StudentCourseRepository;
 import repo.StudentRepository;
@@ -21,8 +20,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-public class StudentServiceTest {
+
+class StudentServiceTest {
 
     private StudentService studentService;
 
@@ -41,7 +40,7 @@ public class StudentServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        studentService = new StudentService(studentRepository, courseService, studentCourseRepository, courseRepository);
+        studentService = new StudentService(studentRepository, courseService, studentCourseRepository);
     }
 
     @Test
@@ -51,7 +50,7 @@ public class StudentServiceTest {
         studentDTO.setEmail("sujit@example.com");
 
         Student student = new Student();
-        student.setFullNameEnglish("JSujit Kumar");
+        student.setFullNameEnglish("Sujit Kumar");
         student.setEmail("sujit.doe@example.com");
 
         when(studentRepository.save(any(Student.class))).thenReturn(student);
@@ -66,8 +65,7 @@ public class StudentServiceTest {
         List<CourseDTO> expectedCourses = new ArrayList<>();
         expectedCourses.add(createCourseDTO(1L, "Course 1"));
         expectedCourses.add(createCourseDTO(2L, "Course 2"));
-        when(courseService.getAllCourses()).thenReturn(expectedCourses);
-
+        when(courseService.getCourses()).thenReturn(expectedCourses);
         List<CourseDTO> result = studentService.getAllCourses();
 
         assertNotNull(result);
